@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掃除タスク管理アプリ</title>
+    <style>
+        /* シンプルなCSS */
+        body { font-family: Arial, sans-serif; }
+        #map { height: 400px; width: 100%; }
+        .task-form { margin: 20px 0; }
+        .chat { margin-top: 20px; }
+        .chat input, .chat textarea { width: 100%; }
+        .task-list { margin-top: 20px; }
+        .task-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>掃除タスク管理アプリ</h1>
+    <div id="map"></div>
+    <div class="task-form">
+        <h2>タスクを追加</h2>
+        <input type="text" id="reward" placeholder="成功報酬"><br>
+        <textarea id="description" placeholder="やって欲しい内容"></textarea><br>
+        <button onclick="addTask()">タスクを追加</button>
+    </div>
+    <div class="task-list">
+        <h2>タスク一覧</h2>
+        <div id="tasks"></div>
+    </div>
+    <div class="chat">
+        <h2>チャット</h2>
+        <input type="text" id="chatMessage" placeholder="メッセージを入力"><br>
+        <button onclick="sendMessage()">送信</button>
+        <div id="chatMessages"></div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script src="app.js"></script>
+</body>
+</html>
