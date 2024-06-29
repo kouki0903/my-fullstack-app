@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掃除タスク管理アプリ</title>
+    <style>
+        /* シンプルなCSS */
+        body { font-family: Arial, sans-serif; }
+        #map { height: 400px; width: 100%; }
+        .task-form { margin: 20px 0; }
+        .chat { margin-top: 20px; }
+        .chat input, .chat textarea { width: 100%; }
+        .task-list { margin-top: 20px; }
+        .task-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>掃除タスク管理アプリ</h1>
+    <div id="map"></div>
+    <div class="task-form">
+        <h2>タスクを追加</h2>
+        <input type="text" id="reward" placeholder="成功報酬"><br>
+        <textarea id="description" placeholder="やって欲しい内容"></textarea><br>
+        <button onclick="addTask()">タスクを追加</button>
+    </div>
+    <div class="task-list">
+        <h2>タスク一覧</h2>
+        <div id="tasks"></div>
+    </div>
+    <div class="chat">
+        <h2>チャット</h2>
+        <input type="text" id="chatMessage" placeholder="メッセージを入力"><br>
+        <button onclick="sendMessage()">送信</button>
+        <div id="chatMessages"></div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script>
+      let map;
+let markers = [];
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -34.397, lng: 150.644 },
+        zoom: 8,
+    });
+
+    map.addListener("click", (event) => {
+        const marker = new google.maps.Marker({
+            position: event.latLng,
+            map: map,
+        });
+        markers.push(marker);
+
+        const task = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng(),
+            reward: '',
+            description: ''
+        };
+
+        addTaskToList(task);
+    });
+}
+
+function addTaskToList(task) {
+    const tasksDiv = document.getElementById('tasks');
+    const taskDiv = document.createElement('div');
+    taskDiv.className = 'task-item';
+    taskDiv.innerHTML = `
+        <div>報酬: ${task.reward}</div>
+        <div>内容: ${task.description}</div>
+        <button onclick="startChat()">チャットを開始</button>
+    `;
+    tasksDiv.appendChild(taskDiv);
+}
+
+function addTask() {
+    const reward = document.getElementById('reward').value;
+    const description = document.getElementById('description').value;
+    const task = {
+        reward,
+        description,
+        lat: markers[markers.length - 1].getPosition().lat(),
+        lng: markers[markers.length - 1].getPosition().lng()
+    };
+
+    addTaskToList(task);
+
+    // PHPのサーバーサイドにタスクを保存する
+    fetch('save_task.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(task)
+    });
+}
+
+function startChat() {
+    // チャットを開始するロジックを実装
+}
+
+function sendMessage() {
+    const message = document.getElementById('chatMessage').value;
+    const chatMessagesDiv = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = message;
+    chatMessagesDiv.appendChild(messageDiv);
+
+    // メッセージをサーバーに保存するロジックを実装
+}
+        </script>
+</body>
+</html>
